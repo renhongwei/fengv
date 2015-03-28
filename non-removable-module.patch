@@ -1,0 +1,35 @@
+diff --git a/arch/arm64/boot/dts/exynos7580-mochagw01-evt2.dts b/arch/arm64/boot/dts/exynos7580-mochagw01-evt2.dts
+index 79b2ece..8a45049 100644
+--- a/arch/arm64/boot/dts/exynos7580-mochagw01-evt2.dts
++++ b/arch/arm64/boot/dts/exynos7580-mochagw01-evt2.dts
+@@ -159,6 +159,7 @@
+ 		caps-control;
+ 		supports-highspeed;
+ 		supports-sdr104-mode;
++		non-removable;
+ 		keep-power-in-suspend;
+ 		/* pm-ignore-notify; */
+ 		/* cd-type-external; */
+diff --git a/arch/arm64/configs/mochagw01_defconfig b/arch/arm64/configs/mochagw01_defconfig
+index f8e4051..bef3b2f 100644
+--- a/arch/arm64/configs/mochagw01_defconfig
++++ b/arch/arm64/configs/mochagw01_defconfig
+@@ -382,3 +382,4 @@ CONFIG_ARM64_PTDUMP=y
+ CONFIG_DEBUG_RODATA=y
+ CONFIG_UHID=y
+ CONFIG_BCM4339=y
++CONFIG_MODULE_UNLOAD=y
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 6b8be1b..cb4853f 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -4229,6 +4229,9 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
+ 
+ 	/* caps */
+ 	if (of_find_property(np, "caps-control", NULL)) {
++		if (of_find_property(np, "non-removable", NULL))
++			pdata->caps = MMC_CAP_NONREMOVABLE;
++
+ 		if (of_find_property(np, "supports-ddr50", NULL))
+ 			pdata->caps = MMC_CAP_UHS_DDR50;
+ 
